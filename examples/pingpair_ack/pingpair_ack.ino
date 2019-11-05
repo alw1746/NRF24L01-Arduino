@@ -19,8 +19,8 @@
 #include "RF24.h"
 #include "printf.h"
 
-// Hardware configuration: Set up nRF24L01 radio on SPI bus plus pins 7 & 8 
-RF24 radio(10,9);
+// Hardware configuration: Set up nRF24L01 radio on SPI bus plus pins 9,10
+RF24 radio(10,9);  //customised
 
 // Topology
 const uint64_t pipes[2] = { 0xABCDABCD71LL, 0x544d52687CLL };              // Radio pipe addresses for the 2 nodes to communicate.
@@ -48,11 +48,14 @@ void setup(){
   // Setup and configure rf radio
 
   radio.begin();
-  radio.setDataRate(RF24_250KBPS);
-  radio.setPALevel(RF24_PA_MIN);
+  radio.setDataRate(RF24_250KBPS);       //customised
+  radio.setPALevel(RF24_PA_MIN);         //customised
   radio.setAutoAck(1);                    // Ensure autoACK is enabled
   radio.enableAckPayload();               // Allow optional ack payloads
-  //radio.setRetries(0,15);                 // Smallest time between retries, max no. of retries
+  
+  /* customised. removed config below as it does not work. */
+  //radio.setRetries(0,15);               // Smallest time between retries, max no. of retries.
+
   radio.setPayloadSize(1);                // Here we are sending 1-byte payloads to test the call-response speed
   radio.openWritingPipe(pipes[1]);        // Both radios listen on the same pipes by default, and switch when writing
   radio.openReadingPipe(1,pipes[0]);
@@ -77,7 +80,7 @@ void loop(void) {
     if (!radio.write( &counter, 1 )){
       faults++;
       lines++;
-      if (lines % 50 == 0) {
+      if (lines % 50 == 0) {       //customised. print fault count every 50 lines of output as reminder.
         Serial.print(F("failed. faults: "));
         Serial.println(faults);
       } else
@@ -92,7 +95,7 @@ void loop(void) {
           unsigned long tim = micros();
           radio.read( &gotByte, 1 );
           lines++;
-          if (lines % 50 == 0)
+          if (lines % 50 == 0)      //customised. print fault count every 50 lines of output as reminder.
             printf("Got response %d, round-trip delay: %lu microseconds, faults: %d\n\r",gotByte,tim-time,faults);
           else
             printf("Got response %d, round-trip delay: %lu microseconds\n\r",gotByte,tim-time);
