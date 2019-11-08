@@ -59,7 +59,7 @@ void setup(){
   radio.setPayloadSize(1);                // Here we are sending 1-byte payloads to test the call-response speed
   radio.openWritingPipe(pipes[1]);        // Both radios listen on the same pipes by default, and switch when writing
   radio.openReadingPipe(1,pipes[0]);
-  if (radio.isChipConnected())
+  if (radio.isChipConnected())            // customised
     Serial.println("Chip connected");
   else
     Serial.println("Chip not connected");
